@@ -1,0 +1,989 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Ежок">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<style>html{color-scheme:light dark}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Ежок</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@600;700&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root{
+  --paper:#F7EFF1;
+  --surface:#FFFFFF;
+  --surface-2:#FCF4F6;
+  --ink:#2A1A21;
+  --ink-2:#57414A;
+  --muted:#94787F;
+  --rule:#EBD8DD;
+  --rule-soft:#F3E6EA;
+  --accent:#B33C74;
+  --accent-ink:#A33268;
+  --accent-soft:#FBE5EE;
+  --signal:#B07A1F;
+  --good:#4E8A54;
+  --bad:#C0453E;
+  --study:#8A4FA8;
+  --study-soft:#F3E9F7;
+  --shadow:0 1px 0 rgba(42,26,33,.04), 0 14px 30px -22px rgba(42,26,33,.45);
+  --radius:16px;
+  --fd:'Comfortaa','Golos Text',system-ui,sans-serif;
+  --fb:'Golos Text',system-ui,-apple-system,sans-serif;
+  --fm:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#171114; --surface:#211A1E; --surface-2:#2A2126;
+    --ink:#F2E7EC; --ink-2:#D0BEC6; --muted:#9B858D;
+    --rule:#372C33; --rule-soft:#2B2228;
+    --accent:#F0A0C4; --accent-ink:#F5B3D1; --accent-soft:#30202A;
+    --signal:#E0B455; --good:#8CBF8A; --bad:#E08B84;
+    --study:#CE9FE6; --study-soft:#2B2133;
+    --shadow:0 1px 0 rgba(0,0,0,.25), 0 14px 30px -22px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#171114; --surface:#211A1E; --surface-2:#2A2126;
+  --ink:#F2E7EC; --ink-2:#D0BEC6; --muted:#9B858D;
+  --rule:#372C33; --rule-soft:#2B2228;
+  --accent:#F0A0C4; --accent-ink:#F5B3D1; --accent-soft:#30202A;
+  --signal:#E0B455; --good:#8CBF8A; --bad:#E08B84;
+  --study:#CE9FE6; --study-soft:#2B2133;
+  --shadow:0 1px 0 rgba(0,0,0,.25), 0 14px 30px -22px rgba(0,0,0,.9);
+}
+*{box-sizing:border-box}
+body{
+  background:var(--paper);color:var(--ink);font-family:var(--fb);
+  font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer;background:none;border:none;padding:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+
+.wrap{max-width:560px;margin:0 auto;padding:0 16px 96px;display:flex;flex-direction:column;gap:18px}
+
+/* header */
+.top{padding:22px 2px 0;display:flex;align-items:center;gap:11px}
+.mark{width:36px;height:36px;border-radius:10px;flex:0 0 auto;display:block;box-shadow:var(--shadow)}
+.brand{font-family:var(--fd);font-weight:700;font-size:18px;letter-spacing:-.02em;line-height:1.1;flex:1}
+.brand small{display:block;font-family:var(--fm);font-weight:500;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:5px}
+.syncdot{font-family:var(--fm);font-size:10px;letter-spacing:.06em;color:var(--muted);text-align:right;white-space:nowrap}
+.syncdot b{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--muted);margin-right:5px;vertical-align:middle}
+.syncdot.on b{background:var(--good)}
+.syncdot.warn b{background:var(--bad)}
+textarea.bk{width:100%;min-height:78px;resize:vertical;border:1px solid var(--rule);background:var(--surface-2);
+  border-radius:10px;padding:9px 11px;font-family:var(--fm);font-size:11px;line-height:1.4;margin-top:10px;word-break:break-all}
+
+/* week strip */
+.week{display:flex;align-items:center;gap:6px}
+.week .nav{width:30px;height:56px;border-radius:10px;color:var(--muted);font-size:17px;display:grid;place-items:center;flex:0 0 auto}
+.week .nav:hover{background:var(--surface-2);color:var(--ink)}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;flex:1 1 auto;min-width:0}
+.day{border:1px solid var(--rule-soft);background:var(--surface);border-radius:11px;padding:7px 2px 6px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;transition:transform .12s ease,border-color .12s ease}
+.day .wd{font-family:var(--fm);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.day .dd{font-family:var(--fm);font-weight:700;font-size:15px;font-variant-numeric:tabular-nums}
+.day .bar{width:18px;height:3px;border-radius:2px;background:var(--rule);overflow:hidden}
+.day .bar i{display:block;height:100%;background:var(--good);border-radius:2px}
+.day[data-today="1"] .dd{color:var(--accent-ink)}
+.day[aria-pressed="true"]{border-color:var(--ink);background:var(--surface-2);transform:translateY(-1px)}
+.day[aria-pressed="true"] .wd{color:var(--ink-2)}
+.day.future{opacity:.55}
+
+/* tabs */
+.tabs{display:flex;gap:2px;background:var(--surface-2);border:1px solid var(--rule-soft);border-radius:12px;padding:3px}
+.tabs button{flex:1;padding:8px 2px;border-radius:9px;font-size:12px;font-weight:500;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow);font-weight:600}
+
+/* shared */
+.card{background:var(--surface);border:1px solid var(--rule-soft);border-radius:var(--radius);box-shadow:var(--shadow)}
+.eyebrow{font-family:var(--fm);font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--muted);display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:0 2px 8px}
+.eyebrow em{font-style:normal;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.stack{display:flex;flex-direction:column;gap:18px}
+.headline{display:flex;align-items:baseline;gap:10px;padding:2px 2px 0;flex-wrap:wrap}
+.headline h2{margin:0;font-family:var(--fd);font-weight:700;font-size:22px;letter-spacing:-.03em}
+.headline span{font-family:var(--fm);font-size:11px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
+
+/* time rows */
+.block{display:grid;grid-template-columns:52px 1fr 30px;gap:12px;align-items:center;
+  padding:11px 14px 11px 12px;border-top:1px solid var(--rule-soft);text-align:left;width:100%}
+.block:first-child{border-top:none}
+.block .t{font-family:var(--fm);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2;letter-spacing:-.02em}
+.block .t i{display:block;font-style:normal;font-weight:500;font-size:10.5px;color:var(--muted);margin-top:1px}
+.block .n{font-size:14.5px;font-weight:500;overflow-wrap:anywhere}
+.block .n u{display:block;text-decoration:none;font-size:11px;color:var(--muted);margin-top:2px}
+.block.done .n{color:var(--muted);text-decoration:line-through;text-decoration-thickness:1px}
+.block.now{background:var(--accent-soft)}
+.block.now .t{color:var(--accent-ink)}
+.block.lesson .t{color:var(--study)}
+.block.lesson.now{background:var(--study-soft)}
+.tick{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--rule);display:grid;place-items:center;
+  transition:transform .12s ease,background .12s ease,border-color .12s ease;flex:0 0 auto}
+.tick svg{width:13px;height:13px;opacity:0}
+.block.done .tick,.habit.done .tick{background:var(--good);border-color:var(--good)}
+.block.done .tick svg,.habit.done .tick svg{opacity:1;stroke:var(--surface)}
+.block:active .tick,.habit:active .tick{transform:scale(.86)}
+
+/* habits */
+.habit{display:grid;grid-template-columns:4px 1fr auto auto;gap:11px;align-items:center;
+  padding:12px 14px 12px 10px;border-top:1px solid var(--rule-soft);text-align:left;width:100%}
+.habit:first-child{border-top:none}
+.habit .hue{width:4px;height:26px;border-radius:3px}
+.habit .n{font-size:14.5px;font-weight:500;overflow-wrap:anywhere}
+.habit .streak{font-family:var(--fm);font-size:11px;font-weight:700;color:var(--signal);font-variant-numeric:tabular-nums}
+.habit .streak.zero{color:var(--muted);opacity:.6}
+.habit .cnt{font-family:var(--fm);font-size:11.5px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;min-width:30px;text-align:right}
+.habit.done .n{color:var(--ink-2)}
+.pips{display:flex;gap:3px;margin-top:5px}
+.pips i{width:100%;max-width:14px;height:3px;border-radius:2px;background:var(--rule)}
+
+textarea.note{width:100%;border:none;background:transparent;resize:vertical;min-height:74px;padding:14px;
+  font-size:14.5px;line-height:1.5;border-radius:var(--radius)}
+textarea.note::placeholder{color:var(--muted)}
+.empty{padding:22px 16px;text-align:center;color:var(--muted);font-size:13.5px;line-height:1.55}
+.banner{display:flex;gap:12px;align-items:center;justify-content:space-between;
+  border:1px dashed var(--rule);border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--ink-2)}
+.banner button{font-size:12px;font-weight:600;color:var(--accent-ink);white-space:nowrap;border-bottom:1px solid currentColor;line-height:1.1}
+
+/* badges */
+.badge{font-family:var(--fm);font-size:9.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 6px;border-radius:6px;background:var(--surface-2);color:var(--muted);white-space:nowrap;border:1px solid var(--rule-soft)}
+.badge.odd{color:var(--study);border-color:var(--study);background:transparent}
+.badge.even{color:var(--accent-ink);border-color:var(--accent-ink);background:transparent}
+
+/* parity card */
+.parity{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px}
+.parity .lab{font-size:14px;font-weight:600}
+.parity .lab b{font-family:var(--fd);font-weight:700}
+.parity .sub{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
+
+/* day picker (study) */
+.daychips{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.daychips button{border:1px solid var(--rule-soft);background:var(--surface);border-radius:10px;padding:9px 0 8px;
+  font-family:var(--fm);font-size:11px;font-weight:700;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:4px}
+.daychips button b{display:block;width:5px;height:5px;border-radius:50%;background:var(--rule)}
+.daychips button.has b{background:var(--study)}
+.daychips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.daychips button[aria-pressed="true"] b{background:var(--paper)}
+
+/* stats */
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule-soft);border-radius:var(--radius);overflow:hidden}
+.statgrid div{background:var(--surface);padding:14px 8px;text-align:center}
+.statgrid b{display:block;font-family:var(--fd);font-weight:700;font-size:23px;letter-spacing:-.04em;font-variant-numeric:tabular-nums}
+.statgrid span{display:block;font-family:var(--fm);font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:5px}
+.hcard{padding:14px;border-top:1px solid var(--rule-soft)}
+.hcard:first-child{border-top:none}
+.hhead{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.hhead .hue{width:4px;height:18px;border-radius:3px;flex:0 0 auto}
+.hhead .n{font-weight:600;font-size:14px;flex:1;overflow-wrap:anywhere}
+.hhead .m{font-family:var(--fm);font-size:11px;font-weight:700;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.heat{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.heat i{aspect-ratio:1;border-radius:4px;background:var(--rule-soft);display:block}
+.heat i.off{background:transparent}
+.heat i.today{box-shadow:inset 0 0 0 1.5px var(--ink)}
+.heatlabels{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:5px}
+.heatlabels span{font-family:var(--fm);font-size:9px;color:var(--muted);text-align:center}
+.spark{display:flex;align-items:flex-end;gap:3px;height:56px;padding:0 2px}
+.spark i{flex:1;background:var(--accent);border-radius:2px 2px 0 0;min-height:2px;opacity:.85}
+.spark i.zero{background:var(--rule);opacity:1}
+.sparkaxis{display:flex;justify-content:space-between;font-family:var(--fm);font-size:9.5px;color:var(--muted);margin-top:7px;padding:0 2px}
+
+/* setup rows */
+.row{display:grid;grid-template-columns:4px 1fr auto auto;gap:10px;align-items:center;padding:11px 14px 11px 10px;border-top:1px solid var(--rule-soft)}
+.row:first-child{border-top:none}
+.row .n{font-size:14px;font-weight:500;overflow-wrap:anywhere}
+.row .n u{display:block;text-decoration:none;font-family:var(--fm);font-size:10.5px;color:var(--muted);margin-top:3px}
+.lrow{display:grid;grid-template-columns:52px 1fr auto auto;gap:10px;align-items:center;padding:11px 12px;border-top:1px solid var(--rule-soft)}
+.lrow:first-child{border-top:none}
+.lrow .t{font-family:var(--fm);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2;color:var(--study)}
+.lrow .t i{display:block;font-style:normal;font-weight:500;font-size:10.5px;color:var(--muted);margin-top:1px}
+.lrow .n{font-size:14px;font-weight:500;overflow-wrap:anywhere}
+.lrow .n u{display:block;text-decoration:none;font-size:11px;color:var(--muted);margin-top:2px}
+.lrow .n .badge{margin-top:5px;display:inline-block}
+.iconbtn{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--muted)}
+.iconbtn:hover{background:var(--surface-2);color:var(--ink)}
+.iconbtn.danger:hover{color:var(--bad)}
+.iconbtn svg{width:15px;height:15px}
+
+/* forms */
+form.f{display:flex;flex-direction:column;gap:11px;padding:14px;border-top:1px solid var(--rule-soft)}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-family:var(--fm);font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.field input[type=text],.field input[type=time],.field input[type=number],.field input[type=date]{
+  border:1px solid var(--rule);background:var(--surface-2);border-radius:10px;padding:9px 11px;font-size:15px;width:100%}
+.field input[type=time],.field input[type=number],.field input[type=date]{font-family:var(--fm);font-variant-numeric:tabular-nums}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+.chip{border:1px solid var(--rule);border-radius:9px;padding:7px 0;flex:1 1 0;min-width:34px;text-align:center;
+  font-family:var(--fm);font-size:11px;font-weight:700;color:var(--muted);background:var(--surface-2)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.hues{display:flex;gap:8px}
+.hue-opt{width:28px;height:28px;border-radius:50%;border:2px solid transparent}
+.hue-opt[aria-pressed="true"]{border-color:var(--ink)}
+.btnrow{display:flex;gap:9px;margin-top:2px}
+.btn{flex:1;background:var(--ink);color:var(--paper);border-radius:11px;padding:11px;font-size:14px;font-weight:600}
+.btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--rule);flex:0 0 auto;padding:11px 16px}
+.addbtn{width:100%;padding:13px;font-size:13.5px;font-weight:600;color:var(--accent-ink);border-top:1px solid var(--rule-soft);
+  display:flex;align-items:center;justify-content:center;gap:7px}
+.addbtn:hover{background:var(--accent-soft)}
+.addbtn.study{color:var(--study)}
+.addbtn.study:hover{background:var(--study-soft)}
+.hint{font-size:12.5px;color:var(--muted);line-height:1.55;padding:0 3px}
+.hint b{color:var(--ink-2);font-weight:600}
+details.help{border:1px solid var(--rule-soft);border-radius:12px;background:var(--surface);overflow:hidden}
+details.help summary{padding:12px 14px;font-size:13px;font-weight:600;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.help summary::-webkit-details-marker{display:none}
+details.help summary::after{content:'+';font-family:var(--fm);color:var(--muted)}
+details.help[open] summary::after{content:'–'}
+details.help .body{padding:0 14px 14px;font-size:13px;color:var(--ink-2);line-height:1.6}
+details.help ol{margin:0;padding-left:18px}
+details.help li{margin-bottom:5px}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">Ежок<small id="todayLine">—</small></div>
+    <div class="syncdot on" id="sync"><b></b><span>на телефоне</span></div>
+  </div>
+
+  <div class="week">
+    <button class="nav" data-act="week" data-d="-1" aria-label="Предыдущая неделя">‹</button>
+    <div class="days" id="days"></div>
+    <button class="nav" data-act="week" data-d="1" aria-label="Следующая неделя">›</button>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button role="tab" data-act="tab" data-t="day" aria-selected="true">День</button>
+    <button role="tab" data-act="tab" data-t="study" aria-selected="false">Учёба</button>
+    <button role="tab" data-act="tab" data-t="stats" aria-selected="false">Итоги</button>
+    <button role="tab" data-act="tab" data-t="setup" aria-selected="false">Настройка</button>
+  </div>
+
+  <div id="view"></div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+var ICON='icon-180.png';
+
+/* ---- офлайн-кэш ---- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+
+/* ---------------- helpers ---------------- */
+var $=function(s,r){return (r||document).querySelector(s)};
+var pad=function(n){return String(n).padStart(2,'0')};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+var key=function(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())};
+var fromKey=function(k){var p=String(k).split('-').map(Number);return new Date(p[0],p[1]-1,p[2])};
+var addDays=function(d,n){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()+n);return x};
+var uid=function(){return Math.random().toString(36).slice(2,9)+Date.now().toString(36).slice(-3)};
+var WD=['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+var WDMON=[1,2,3,4,5,6,0];
+var WDFULL=['воскресенье','понедельник','вторник','среда','четверг','пятница','суббота'];
+var WDFULL_CAP=['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+var MON_GEN=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+var MON_NOM=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+var HUES=['#C2557F','#8A4FA8','#4E8A54','#B07A1F','#3F6FA8','#2A8C86'];
+var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 6.5"/></svg>';
+var PEN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>';
+var TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13"/></svg>';
+var plural=function(n,a,b,c){var m=n%100;if(m>=11&&m<=14)return c;m=n%10;return m===1?a:(m>=2&&m<=4?b:c)};
+var PARS=[['all','Каждую'],['odd','Нечёт'],['even','Чёт']];
+var PARTXT={all:'каждую неделю',odd:'по нечётным',even:'по чётным'};
+
+/* ---------------- state ---------------- */
+var LS='ezhok-v1';
+var TODAY=key(new Date());
+function mondayKey(d){ return key(addDays(d,-((d.getDay()+6)%7))) }
+
+function seed(){
+  var all=[0,1,2,3,4,5,6];
+  return {
+    v:2, seeded:true, updatedAt:Date.now(),
+    parity:{anchor:mondayKey(new Date()),odd:true},
+    habits:[
+      {id:uid(),name:'Вода',goal:8,days:all,hue:0,ex:1},
+      {id:uid(),name:'Зарядка утром',goal:1,days:all,hue:1,ex:1},
+      {id:uid(),name:'Чтение 20 минут',goal:1,days:all,hue:4,ex:1},
+      {id:uid(),name:'Без телефона за час до сна',goal:1,days:all,hue:5,ex:1}
+    ],
+    blocks:[
+      {id:uid(),name:'Подъём и зарядка',from:'07:00',to:'07:30',days:all,repeat:'weekly',ex:1},
+      {id:uid(),name:'Завтрак, планы на день',from:'08:00',to:'08:30',days:all,repeat:'weekly',ex:1},
+      {id:uid(),name:'Обед и прогулка',from:'13:00',to:'14:00',days:all,repeat:'weekly',ex:1},
+      {id:uid(),name:'Тренировка',from:'18:30',to:'19:30',days:[1,3,5],repeat:'weekly',ex:1},
+      {id:uid(),name:'Без экрана, чтение',from:'22:30',to:'23:00',days:all,repeat:'weekly',ex:1}
+    ],
+    lessons:[],
+    log:{}
+  };
+}
+function migrate(s){
+  s.log=s.log||{}; s.habits=s.habits||[]; s.blocks=s.blocks||[]; s.lessons=s.lessons||[];
+  s.blocks.forEach(function(b){ if(!b.repeat) b.repeat='weekly'; if(!b.days) b.days=[0,1,2,3,4,5,6] });
+  s.lessons.forEach(function(l){ if(!l.parity) l.parity='all' });
+  if(!s.parity||!s.parity.anchor) s.parity={anchor:mondayKey(new Date()),odd:true};
+  Object.keys(s.log).forEach(function(k){var d=s.log[k];d.h=d.h||{};d.b=d.b||{};d.l=d.l||{};if(d.note==null)d.note=''});
+  s.v=2; return s;
+}
+function load(){
+  var keys=[LS,LS+'-bak'];
+  for(var i=0;i<keys.length;i++){
+    try{
+      var raw=localStorage.getItem(keys[i]);
+      if(raw){ var s=JSON.parse(raw); if(s&&s.habits&&s.blocks) return migrate(s) }
+    }catch(e){}
+  }
+  return seed();
+}
+var S=load();
+var sel=TODAY;
+var weekAnchor=new Date();
+var tab='day';
+var studyDay=(new Date()).getDay()===0?1:(new Date()).getDay();
+var editing=null;   // {kind:'habit'|'block'|'lesson', id, once, day}
+
+/* ---------------- persistence: ТОЛЬКО это устройство ---------------- */
+function hasUserContent(s){
+  if(!s) return false;
+  if((s.lessons||[]).length) return true;
+  if((s.blocks||[]).some(function(b){return !b.ex})) return true;
+  if((s.habits||[]).some(function(h){return !h.ex})) return true;
+  var lg=s.log||{};
+  return Object.keys(lg).some(function(k){
+    var d=lg[k]||{};
+    return Object.keys(d.h||{}).length || Object.keys(d.b||{}).length ||
+           Object.keys(d.l||{}).length || String(d.note||'').trim().length;
+  });
+}
+function snap(){ return JSON.parse(JSON.stringify(S)) }
+function stamp(){ var d=new Date(); return pad(d.getHours())+':'+pad(d.getMinutes()) }
+function setSync(state,label){
+  var el=$('#sync'); if(!el) return;
+  el.classList.toggle('on',state==='ok');
+  el.classList.toggle('warn',state!=='ok');
+  el.querySelector('span').textContent=label;
+}
+function cacheLocal(){
+  var txt;
+  try{ txt=JSON.stringify(S) }catch(e){ setSync('error','ошибка данных'); return }
+  var ok=false;
+  try{ localStorage.setItem(LS,txt); ok=true }catch(e){}
+  try{ localStorage.setItem(LS+'-bak',txt) }catch(e){}
+  setSync(ok?'ok':'error', ok?('сохранено '+stamp()):'НЕ сохраняется');
+}
+function touch(){ S.fresh=false; S.updatedAt=Date.now(); cacheLocal() }
+
+/* ---------------- derived ---------------- */
+function dayLog(k){
+  if(!S.log[k]) S.log[k]={h:{},b:{},l:{},note:''};
+  var d=S.log[k]; d.h=d.h||{}; d.b=d.b||{}; d.l=d.l||{}; if(d.note==null) d.note='';
+  return d;
+}
+function peek(k){ return S.log[k]||null }
+
+function parityOf(k){
+  var p=S.parity||{anchor:mondayKey(new Date()),odd:true};
+  var m1=fromKey(p.anchor), m2=fromKey(mondayKey(fromKey(k)));
+  var weeks=Math.round((m2-m1)/86400000/7);
+  var same=(((weeks%2)+2)%2)===0;
+  var isOdd=same?(p.odd!==false):(p.odd===false);
+  return isOdd?'odd':'even';
+}
+function parityLabel(k){ return parityOf(k)==='odd'?'нечётная':'чётная' }
+
+function habitsFor(k){
+  var wd=fromKey(k).getDay();
+  return S.habits.filter(function(h){return (h.days||[]).indexOf(wd)>=0});
+}
+function blocksFor(k){
+  var wd=fromKey(k).getDay();
+  return S.blocks.filter(function(b){
+    if(b.repeat==='once') return b.date===k;
+    return (b.days||[]).indexOf(wd)>=0;
+  }).sort(function(a,b){return (a.from||'').localeCompare(b.from||'')});
+}
+function lessonsFor(k){
+  var wd=fromKey(k).getDay(), par=parityOf(k);
+  return S.lessons.filter(function(l){
+    return l.day===wd && (l.parity==='all'||l.parity===par);
+  }).sort(function(a,b){return (a.from||'').localeCompare(b.from||'')});
+}
+function lessonsOfDay(wd){
+  return S.lessons.filter(function(l){return l.day===wd})
+    .sort(function(a,b){return (a.from||'').localeCompare(b.from||'')});
+}
+function habitDone(k,h){ var l=peek(k); return !!l&&(l.h[h.id]||0)>=(h.goal||1) }
+function dayScore(k){
+  if(fromKey(k)>fromKey(TODAY)) return null;
+  var hs=habitsFor(k), bs=blocksFor(k), ls=lessonsFor(k);
+  var total=hs.length+bs.length+ls.length;
+  if(!total) return null;
+  var l=peek(k), done=0;
+  hs.forEach(function(h){ if(l&&(l.h[h.id]||0)>=(h.goal||1)) done++ });
+  bs.forEach(function(b){ if(l&&l.b[b.id]) done++ });
+  ls.forEach(function(x){ if(l&&l.l[x.id]) done++ });
+  return done/total;
+}
+function streak(h){
+  var n=0,d=new Date();
+  for(var i=0;i<400;i++){
+    var k=key(d);
+    if((h.days||[]).indexOf(d.getDay())>=0){
+      if(habitDone(k,h)) n++; else if(k!==TODAY) break;
+    }
+    d=addDays(d,-1);
+  }
+  return n;
+}
+function bestStreak(h){
+  var keys=Object.keys(S.log).sort();
+  if(!keys.length) return streak(h);
+  var d=fromKey(keys[0]), end=fromKey(TODAY), best=0, cur=0;
+  while(d<=end){
+    if((h.days||[]).indexOf(d.getDay())>=0){
+      if(habitDone(key(d),h)){cur++;if(cur>best)best=cur} else cur=0;
+    }
+    d=addDays(d,1);
+  }
+  return Math.max(best,streak(h));
+}
+function rate30(h){
+  var hit=0,tot=0,d=new Date();
+  for(var i=0;i<30;i++){
+    if((h.days||[]).indexOf(d.getDay())>=0){tot++;if(habitDone(key(d),h))hit++}
+    d=addDays(d,-1);
+  }
+  return tot?Math.round(hit/tot*100):0;
+}
+function lessonRate30(){
+  var hit=0,tot=0,d=new Date();
+  for(var i=0;i<30;i++){
+    var k=key(d), l=peek(k);
+    lessonsFor(k).forEach(function(x){ tot++; if(l&&l.l[x.id]) hit++ });
+    d=addDays(d,-1);
+  }
+  return {hit:hit,tot:tot,pct:tot?Math.round(hit/tot*100):0};
+}
+
+/* ---------------- render ---------------- */
+function render(){
+  renderTop(); renderWeek();
+  $('#view').innerHTML = tab==='day'?viewDay() : tab==='study'?viewStudy() : tab==='stats'?viewStats() : viewSetup();
+  var ta=$('#noteBox'); if(ta) ta.value=dayLog(sel).note||'';
+  var bo=$('#bkOut'); if(bo){ try{ bo.value=JSON.stringify(S) }catch(e){} }
+  var bf=$('#bkFile'); if(bf) bf.addEventListener('change',onBackupFile);
+}
+function restoreFrom(txt){
+  var obj;
+  try{ obj=JSON.parse(String(txt).trim()) }catch(e){ alert('Это не похоже на резервную копию.'); return }
+  if(!obj||!obj.habits||!obj.blocks){ alert('Это не похоже на резервную копию.'); return }
+  var n=(obj.lessons||[]).length;
+  if(!confirm('Заменить текущие данные копией? В ней '+n+' '+plural(n,'пара','пары','пар')+'.')) return;
+  S=migrate(obj); S.fresh=false; touch(); editing=null; render();
+  alert('Восстановлено.');
+}
+function onBackupFile(e){
+  var f=e.target.files&&e.target.files[0]; if(!f) return;
+  var r=new FileReader();
+  r.onload=function(){ restoreFrom(r.result) };
+  r.onerror=function(){ alert('Не получилось прочитать файл.') };
+  r.readAsText(f);
+}
+function setTab(t){
+  tab=t; editing=null;
+  document.querySelectorAll('[data-act="tab"]').forEach(function(b){b.setAttribute('aria-selected',String(b.dataset.t===t))});
+}
+function renderTop(){
+  var d=fromKey(TODAY);
+  $('#todayLine').textContent=WDFULL[d.getDay()]+' · '+d.getDate()+' '+MON_GEN[d.getMonth()]+(S.lessons.length?' · '+parityLabel(TODAY)+' неделя':'');
+}
+function renderWeek(){
+  var base=new Date(weekAnchor.getFullYear(),weekAnchor.getMonth(),weekAnchor.getDate());
+  var mon=addDays(base,-((base.getDay()+6)%7));
+  var html='';
+  for(var i=0;i<7;i++){
+    var d=addDays(mon,i), k=key(d), sc=dayScore(k), future=fromKey(k)>fromKey(TODAY);
+    html+='<button class="day'+(future?' future':'')+'" data-act="pick" data-k="'+k+'" data-today="'+(k===TODAY?1:0)+'" aria-pressed="'+(k===sel)+'">'+
+      '<span class="wd">'+WD[d.getDay()]+'</span><span class="dd">'+pad(d.getDate())+'</span>'+
+      '<span class="bar"><i style="width:'+Math.round((sc||0)*100)+'%"></i></span></button>';
+  }
+  $('#days').innerHTML=html;
+}
+
+function timeRow(cls,id,act,from,to,name,sub,done,isNow){
+  return '<button class="block '+cls+(done?' done':'')+(isNow?' now':'')+'" data-act="'+act+'" data-id="'+id+'">'+
+    '<span class="t">'+esc(from||'')+'<i>'+esc(to||'')+'</i></span>'+
+    '<span class="n">'+esc(name)+(sub?'<u>'+sub+'</u>':'')+'</span>'+
+    '<span class="tick">'+CHECK+'</span></button>';
+}
+function nowMin(){ var n=new Date(); return n.getHours()*60+n.getMinutes() }
+function isNowRange(k,from,to){
+  if(k!==TODAY||!from||!to) return false;
+  var f=from.split(':'), t=to.split(':');
+  var m=nowMin(); return m>=(+f[0]*60+ +f[1]) && m<(+t[0]*60+ +t[1]);
+}
+
+function viewDay(){
+  var d=fromKey(sel), l=dayLog(sel);
+  var hs=habitsFor(sel), bs=blocksFor(sel), ls=lessonsFor(sel), sc=dayScore(sel);
+  var out='<div class="stack">';
+
+  out+='<div class="headline"><h2>'+d.getDate()+' '+MON_GEN[d.getMonth()]+'</h2><span>'+
+       WDFULL[d.getDay()]+(S.lessons.length?' · '+parityLabel(sel):'')+(sc!=null?' · '+Math.round(sc*100)+'%':'')+'</span></div>';
+
+  if(S.seeded) out+='<div class="banner"><span>Привычки и блоки ниже — примеры. Замени их на свои в «Настройке».</span><button data-act="clearex">Очистить</button></div>';
+
+  /* расписание: пары и блоки одной лентой */
+  var items=ls.map(function(x){return {o:x,lesson:true}})
+    .concat(bs.map(function(b){return {o:b,lesson:false}}))
+    .sort(function(a,b){return (a.o.from||'').localeCompare(b.o.from||'')});
+  var doneCnt=0;
+  items.forEach(function(it){ if(it.lesson?l.l[it.o.id]:l.b[it.o.id]) doneCnt++ });
+
+  out+='<div><div class="eyebrow"><span>Расписание</span><em>'+
+       (ls.length?ls.length+' '+plural(ls.length,'пара','пары','пар')+' · ':'')+doneCnt+'/'+items.length+'</em></div><div class="card">';
+  if(!items.length&&!(editing&&editing.kind==='block'&&editing.once)){
+    out+='<div class="empty">На этот день ничего не запланировано.</div>';
+  }
+  items.forEach(function(it){
+    var x=it.o, now=isNowRange(sel,x.from,x.to), sub;
+    if(it.lesson){
+      sub=x.place?esc(x.place):'пара';
+    } else {
+      sub=(x.repeat==='once'?'только в этот день':'')+(x.place?(x.repeat==='once'?' · ':'')+esc(x.place):'');
+    }
+    if(now) sub='сейчас'+(sub?' · '+sub:'');
+    out+=timeRow(it.lesson?'lesson':'',x.id,it.lesson?'lesson':'block',x.from,x.to,x.name,sub,
+      !!(it.lesson?l.l[x.id]:l.b[x.id]),now);
+  });
+  if(editing&&editing.kind==='block'&&editing.once) out+=blockForm(null,{once:sel});
+  else out+='<button class="addbtn" data-act="newonce">+ Событие на этот день</button>';
+  out+='</div></div>';
+
+  /* привычки */
+  out+='<div><div class="eyebrow"><span>Привычки</span><em>'+hs.filter(function(h){return habitDone(sel,h)}).length+'/'+hs.length+'</em></div><div class="card">';
+  if(!hs.length) out+='<div class="empty">На этот день привычек нет.<br>Добавь их в «Настройке».</div>';
+  hs.forEach(function(h){
+    var n=l.h[h.id]||0, goal=h.goal||1, done=n>=goal, st=streak(h), hue=HUES[h.hue||0], pips='';
+    if(goal>1){ pips='<span class="pips">'; for(var i=0;i<goal;i++) pips+='<i style="'+(i<n?'background:'+hue:'')+'"></i>'; pips+='</span>' }
+    out+='<button class="habit'+(done?' done':'')+'" data-act="habit" data-id="'+h.id+'">'+
+      '<span class="hue" style="background:'+hue+'"></span>'+
+      '<span class="n">'+esc(h.name)+pips+'</span>'+
+      '<span class="streak'+(st?'':' zero')+'">'+(st?'▲ '+st:'—')+'</span>'+
+      (goal>1?'<span class="cnt">'+n+'/'+goal+'</span>':'<span class="tick">'+CHECK+'</span>')+'</button>';
+  });
+  out+='</div></div>';
+
+  out+='<div><div class="eyebrow"><span>Заметка дня</span></div><div class="card">'+
+       '<textarea class="note" id="noteBox" placeholder="Как прошёл день, что мешало, что перенести на завтра…"></textarea></div></div>';
+  return out+'</div>';
+}
+
+function viewStudy(){
+  var out='<div class="stack">';
+  var pl=parityLabel(TODAY);
+
+  out+='<div class="card parity"><div><div class="lab">Эта неделя — <b>'+pl+'</b></div>'+
+    '<div class="sub">По ней определяется, какие пары показывать. Если в универе сейчас наоборот — переключи.</div></div>'+
+    '<button class="btn ghost" data-act="flip">Поменять</button></div>';
+
+  /* день недели */
+  var chips='<div class="daychips">';
+  WDMON.forEach(function(w){
+    chips+='<button data-act="sday" data-w="'+w+'" aria-pressed="'+(w===studyDay)+'" class="'+(lessonsOfDay(w).length?'has':'')+'">'+WD[w]+'<b></b></button>';
+  });
+  chips+='</div>';
+  out+='<div><div class="eyebrow"><span>Расписание пар</span><em>'+S.lessons.length+' всего</em></div>'+chips+'</div>';
+
+  var list=lessonsOfDay(studyDay);
+  out+='<div><div class="eyebrow"><span>'+WDFULL_CAP[studyDay]+'</span><em>'+list.length+' '+plural(list.length,'пара','пары','пар')+'</em></div><div class="card">';
+  if(!list.length&&!(editing&&editing.kind==='lesson')){
+    out+='<div class="empty">Пар в этот день нет.<br>Добавь первую — она будет появляться каждую неделю.</div>';
+  }
+  list.forEach(function(x){
+    if(editing&&editing.kind==='lesson'&&editing.id===x.id){ out+=lessonForm(x); return }
+    var badge=x.parity==='all'?'':'<span class="badge '+x.parity+'">'+(x.parity==='odd'?'нечёт':'чёт')+'</span>';
+    out+='<div class="lrow"><span class="t">'+esc(x.from)+'<i>'+esc(x.to)+'</i></span>'+
+      '<span class="n">'+esc(x.name)+(x.place?'<u>'+esc(x.place)+'</u>':'')+(badge?'<br>'+badge:'')+'</span>'+
+      '<button class="iconbtn" data-act="edit" data-kind="lesson" data-id="'+x.id+'" aria-label="Изменить">'+PEN+'</button>'+
+      '<button class="iconbtn danger" data-act="del" data-kind="lesson" data-id="'+x.id+'" aria-label="Удалить">'+TRASH+'</button></div>';
+  });
+  if(editing&&editing.kind==='lesson'&&!editing.id) out+=lessonForm(null);
+  else out+='<button class="addbtn study" data-act="new" data-kind="lesson">+ Добавить пару</button>';
+  out+='</div></div>';
+
+  /* неделя целиком */
+  if(S.lessons.length){
+    var lr=lessonRate30();
+    out+='<div><div class="eyebrow"><span>Посещаемость</span><em>30 дней</em></div>'+
+      '<div class="card" style="padding:14px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">'+
+      '<div style="font-family:var(--fd);font-weight:700;font-size:26px;letter-spacing:-.04em">'+lr.pct+'%</div>'+
+      '<div style="font-family:var(--fm);font-size:11.5px;color:var(--muted)">'+lr.hit+' из '+lr.tot+' пар отмечено</div></div></div>';
+  }
+
+  out+='<div class="hint">Пара с пометкой <b>нечёт</b> или <b>чёт</b> появится в дне только на своей неделе. Перенос или разовая консультация — это «Событие на этот день» во вкладке «День».</div>';
+  return out+'</div>';
+}
+
+function viewStats(){
+  var out='<div class="stack">';
+  var lt=peek(TODAY), doneToday=0;
+  var totalToday=habitsFor(TODAY).length+blocksFor(TODAY).length+lessonsFor(TODAY).length;
+  habitsFor(TODAY).forEach(function(h){ if(lt&&(lt.h[h.id]||0)>=(h.goal||1)) doneToday++ });
+  blocksFor(TODAY).forEach(function(b){ if(lt&&lt.b[b.id]) doneToday++ });
+  lessonsFor(TODAY).forEach(function(x){ if(lt&&lt.l[x.id]) doneToday++ });
+  var best=0; S.habits.forEach(function(h){var s=streak(h); if(s>best) best=s});
+  var sum=0,cnt=0,dd=new Date();
+  for(var i=0;i<30;i++){var s=dayScore(key(dd)); if(s!=null){sum+=s;cnt++} dd=addDays(dd,-1)}
+  var avg=cnt?Math.round(sum/cnt*100):0;
+
+  out+='<div><div class="eyebrow"><span>Итого</span></div><div class="statgrid">'+
+    '<div><b>'+(totalToday?Math.round(doneToday/totalToday*100):0)+'%</b><span>сегодня</span></div>'+
+    '<div><b>'+avg+'%</b><span>30 дней</span></div>'+
+    '<div><b>'+best+'</b><span>лучший стрик</span></div></div></div>';
+
+  out+='<div><div class="eyebrow"><span>Последние 14 дней</span><em>средн. '+avg+'%</em></div><div class="card" style="padding:14px">';
+  var bars='',first='',last='';
+  for(var j=13;j>=0;j--){
+    var d=addDays(new Date(),-j), k=key(d), sc=dayScore(k)||0;
+    if(j===13) first=pad(d.getDate())+'.'+pad(d.getMonth()+1);
+    if(j===0) last=pad(d.getDate())+'.'+pad(d.getMonth()+1);
+    bars+='<i class="'+(sc?'':'zero')+'" style="height:'+Math.max(4,Math.round(sc*100))+'%" title="'+k+' — '+Math.round(sc*100)+'%"></i>';
+  }
+  out+='<div class="spark">'+bars+'</div><div class="sparkaxis"><span>'+first+'</span><span>'+last+'</span></div></div></div>';
+
+  if(S.lessons.length){
+    var lr=lessonRate30();
+    out+='<div><div class="eyebrow"><span>Пары</span><em>30 дней</em></div>'+
+      '<div class="card" style="padding:14px;display:flex;align-items:baseline;justify-content:space-between;gap:12px">'+
+      '<div style="font-family:var(--fd);font-weight:700;font-size:26px;letter-spacing:-.04em">'+lr.pct+'%</div>'+
+      '<div style="font-family:var(--fm);font-size:11.5px;color:var(--muted)">'+lr.hit+' из '+lr.tot+' отмечено</div></div></div>';
+  }
+
+  var now=new Date();
+  out+='<div><div class="eyebrow"><span>По привычкам</span><em>'+MON_NOM[now.getMonth()]+'</em></div><div class="card">';
+  if(!S.habits.length) out+='<div class="empty">Пока нет ни одной привычки.</div>';
+  S.habits.forEach(function(h){
+    var hue=HUES[h.hue||0];
+    out+='<div class="hcard"><div class="hhead"><span class="hue" style="background:'+hue+'"></span>'+
+      '<span class="n">'+esc(h.name)+'</span>'+
+      '<span class="m">'+streak(h)+' / рек. '+bestStreak(h)+' · '+rate30(h)+'%</span></div>';
+    out+='<div class="heatlabels">'+WDMON.map(function(w){return '<span>'+WD[w]+'</span>'}).join('')+'</div><div class="heat">';
+    var y=now.getFullYear(), m=now.getMonth(), lead=(new Date(y,m,1).getDay()+6)%7;
+    for(var q=0;q<lead;q++) out+='<i class="off"></i>';
+    var lastD=new Date(y,m+1,0).getDate();
+    for(var dn=1;dn<=lastD;dn++){
+      var dt=new Date(y,m,dn), k2=key(dt);
+      var active=(h.days||[]).indexOf(dt.getDay())>=0;
+      var l2=peek(k2), n=l2?(l2.h[h.id]||0):0, p=active?Math.min(1,n/(h.goal||1)):0;
+      var style=active?(p>0?'background:'+hue+';opacity:'+(0.25+0.75*p):''):'opacity:.35';
+      out+='<i class="'+(k2===TODAY?'today':'')+'" style="'+style+'" title="'+k2+'"></i>';
+    }
+    out+='</div></div>';
+  });
+  out+='</div></div>';
+  return out+'</div>';
+}
+
+function dayChips(days){
+  var h='<div class="chips">';
+  WDMON.forEach(function(w){ h+='<button type="button" class="chip" data-act="chip" data-w="'+w+'" aria-pressed="'+(days.indexOf(w)>=0)+'">'+WD[w]+'</button>' });
+  return h+'</div>';
+}
+function oneDayChips(day){
+  var h='<div class="chips">';
+  WDMON.forEach(function(w){ h+='<button type="button" class="chip" data-act="oneday" data-w="'+w+'" aria-pressed="'+(w===day)+'">'+WD[w]+'</button>' });
+  return h+'</div>';
+}
+
+function viewSetup(){
+  var out='<div class="stack">';
+
+  out+='<div><div class="eyebrow"><span>Мои привычки</span><em>'+S.habits.length+'</em></div><div class="card">';
+  if(!S.habits.length&&!(editing&&editing.kind==='habit')) out+='<div class="empty">Добавь первую привычку — например «Вода, 8 раз в день».</div>';
+  S.habits.forEach(function(h){
+    if(editing&&editing.kind==='habit'&&editing.id===h.id){ out+=habitForm(h); return }
+    var days=h.days||[];
+    var dtxt=days.length===7?'каждый день':WDMON.filter(function(w){return days.indexOf(w)>=0}).map(function(w){return WD[w]}).join(' ');
+    out+='<div class="row"><span style="background:'+HUES[h.hue||0]+';width:4px;height:24px;border-radius:3px"></span>'+
+      '<span class="n">'+esc(h.name)+'<u>'+(h.goal>1?h.goal+' '+plural(h.goal,'раз','раза','раз')+' · ':'')+dtxt+'</u></span>'+
+      '<button class="iconbtn" data-act="edit" data-kind="habit" data-id="'+h.id+'" aria-label="Изменить">'+PEN+'</button>'+
+      '<button class="iconbtn danger" data-act="del" data-kind="habit" data-id="'+h.id+'" aria-label="Удалить">'+TRASH+'</button></div>';
+  });
+  if(editing&&editing.kind==='habit'&&!editing.id) out+=habitForm(null);
+  else out+='<button class="addbtn" data-act="new" data-kind="habit">+ Добавить привычку</button>';
+  out+='</div></div>';
+
+  var weekly=S.blocks.filter(function(b){return b.repeat!=='once'}).sort(function(a,b){return (a.from||'').localeCompare(b.from||'')});
+  out+='<div><div class="eyebrow"><span>Блоки дня</span><em>'+weekly.length+'</em></div><div class="card">';
+  if(!weekly.length&&!(editing&&editing.kind==='block'&&!editing.once)) out+='<div class="empty">Добавь блок — например «07:00–07:30 Подъём и зарядка».</div>';
+  weekly.forEach(function(b){
+    if(editing&&editing.kind==='block'&&editing.id===b.id){ out+=blockForm(b,{}); return }
+    var days=b.days||[];
+    var dtxt=days.length===7?'каждый день':WDMON.filter(function(w){return days.indexOf(w)>=0}).map(function(w){return WD[w]}).join(' ');
+    out+='<div class="row"><span></span><span class="n">'+esc(b.name)+'<u>'+esc(b.from)+'–'+esc(b.to)+' · '+dtxt+'</u></span>'+
+      '<button class="iconbtn" data-act="edit" data-kind="block" data-id="'+b.id+'" aria-label="Изменить">'+PEN+'</button>'+
+      '<button class="iconbtn danger" data-act="del" data-kind="block" data-id="'+b.id+'" aria-label="Удалить">'+TRASH+'</button></div>';
+  });
+  if(editing&&editing.kind==='block'&&!editing.id&&!editing.once) out+=blockForm(null,{});
+  else out+='<button class="addbtn" data-act="new" data-kind="block">+ Добавить блок</button>';
+  out+='</div></div>';
+
+  var once=S.blocks.filter(function(b){return b.repeat==='once'}).sort(function(a,b){return String(b.date).localeCompare(String(a.date))});
+  if(once.length){
+    out+='<div><div class="eyebrow"><span>Разовые события</span><em>'+once.length+'</em></div><div class="card">';
+    once.forEach(function(b){
+      if(editing&&editing.kind==='block'&&editing.id===b.id){ out+=blockForm(b,{}); return }
+      var d=fromKey(b.date);
+      out+='<div class="row"><span></span><span class="n">'+esc(b.name)+'<u>'+d.getDate()+' '+MON_GEN[d.getMonth()]+' · '+esc(b.from)+'–'+esc(b.to)+'</u></span>'+
+        '<button class="iconbtn" data-act="edit" data-kind="block" data-id="'+b.id+'" aria-label="Изменить">'+PEN+'</button>'+
+        '<button class="iconbtn danger" data-act="del" data-kind="block" data-id="'+b.id+'" aria-label="Удалить">'+TRASH+'</button></div>';
+    });
+    out+='</div></div>';
+  }
+
+  out+='<div><div class="eyebrow"><span>Резервная копия</span><em>важно</em></div><div class="card" style="padding:14px">'+
+    '<div class="hint" style="padding:0 0 10px">Данные хранятся только на этом телефоне. Если очистить данные Safari или удалить иконку — они пропадут. Делай копию раз в неделю.</div>'+
+    '<div class="btnrow"><button type="button" class="btn" data-act="savefile">Сохранить файл</button>'+
+    '<button type="button" class="btn ghost" data-act="copybk">Скопировать</button></div>'+
+    '<textarea class="bk" id="bkOut" readonly aria-label="Резервная копия"></textarea>'+
+    '<div class="hint" style="padding:12px 0 8px">Восстановить: вставь сюда текст копии или выбери файл.</div>'+
+    '<textarea class="bk" id="bkIn" placeholder="Вставь сюда текст резервной копии"></textarea>'+
+    '<div class="btnrow"><button type="button" class="btn" data-act="restorebk">Восстановить из текста</button></div>'+
+    '<div class="btnrow"><input type="file" id="bkFile" accept=".json,.txt,application/json,text/plain" style="font-size:12px;color:var(--muted)"></div>'+
+  '</div></div>';
+
+  out+='<details class="help"><summary>Поставить на экран «Домой» iPhone</summary><div class="body"><ol>'+
+    '<li>Открой эту страницу в Safari.</li>'+
+    '<li>Кнопка «Поделиться» внизу → <b>На экран «Домой»</b>.</li>'+
+    '<li>Появится иконка с твоим логотипом — открывается без адресной строки, как приложение.</li></ol>'+
+    '<p style="margin:10px 0 0;color:var(--muted)">Приложение целиком скачивается на телефон при первом открытии и дальше работает без интернета. Данные никуда не отправляются — они только в памяти этой иконки.</p></div></details>';
+
+  out+='<div class="hint">Стрик считается только по дням, когда привычка запланирована: пропуск воскресенья не обнулит счётчик, если воскресенье не отмечено в её днях.</div>';
+  return out+'</div>';
+}
+
+function habitForm(h){
+  var days=h?(h.days||[]).slice():[0,1,2,3,4,5,6];
+  var hue=h?(h.hue||0):(S.habits.length%HUES.length);
+  return '<form class="f" data-act="saveHabit" data-id="'+(h?h.id:'')+'" data-days="'+days.join(',')+'" data-hue="'+hue+'">'+
+    '<div class="field"><label>Название</label><input type="text" name="name" value="'+esc(h?h.name:'')+'" placeholder="Например: Вода" required maxlength="60"></div>'+
+    '<div class="pair"><div class="field"><label>Раз в день</label><input type="number" name="goal" min="1" max="20" value="'+(h?(h.goal||1):1)+'"></div>'+
+    '<div class="field"><label>Цвет</label><div class="hues">'+HUES.map(function(c,i){
+      return '<button type="button" class="hue-opt" data-act="hue" data-i="'+i+'" aria-pressed="'+(i===hue)+'" style="background:'+c+'" aria-label="Цвет '+(i+1)+'"></button>'}).join('')+'</div></div></div>'+
+    '<div class="field"><label>Дни недели</label>'+dayChips(days)+'</div>'+
+    '<div class="btnrow"><button type="submit" class="btn">Сохранить</button><button type="button" class="btn ghost" data-act="cancel">Отмена</button></div></form>';
+}
+function blockForm(b,opts){
+  opts=opts||{};
+  var rep=b?(b.repeat||'weekly'):(opts.once?'once':'weekly');
+  var days=b&&b.days&&b.days.length?b.days.slice():[0,1,2,3,4,5,6];
+  var date=(b&&b.date)||opts.once||sel;
+  return '<form class="f" data-act="saveBlock" data-id="'+(b?b.id:'')+'" data-days="'+days.join(',')+'" data-repeat="'+rep+'">'+
+    '<div class="field"><label>Название</label><input type="text" name="name" value="'+esc(b?b.name:'')+'" placeholder="Например: Тренировка" required maxlength="60"></div>'+
+    '<div class="pair"><div class="field"><label>Начало</label><input type="time" name="from" value="'+esc(b?b.from:'09:00')+'" required></div>'+
+    '<div class="field"><label>Конец</label><input type="time" name="to" value="'+esc(b?b.to:'10:00')+'" required></div></div>'+
+    '<div class="field"><label>Повтор</label><div class="chips">'+
+      '<button type="button" class="chip" data-act="rep" data-r="weekly" aria-pressed="'+(rep!=='once')+'">Каждую неделю</button>'+
+      '<button type="button" class="chip" data-act="rep" data-r="once" aria-pressed="'+(rep==='once')+'">Один раз</button>'+
+    '</div></div>'+
+    '<div class="field" data-role="days"'+(rep==='once'?' hidden':'')+'><label>Дни недели</label>'+dayChips(days)+'</div>'+
+    '<div class="field" data-role="date"'+(rep!=='once'?' hidden':'')+'><label>Дата</label><input type="date" name="date" value="'+esc(date)+'"></div>'+
+    '<div class="btnrow"><button type="submit" class="btn">Сохранить</button><button type="button" class="btn ghost" data-act="cancel">Отмена</button></div></form>';
+}
+function lessonForm(x){
+  var day=x?x.day:studyDay, par=x?(x.parity||'all'):'all';
+  return '<form class="f" data-act="saveLesson" data-id="'+(x?x.id:'')+'" data-day="'+day+'" data-par="'+par+'">'+
+    '<div class="field"><label>Предмет</label><input type="text" name="name" value="'+esc(x?x.name:'')+'" placeholder="Например: Матанализ" required maxlength="70"></div>'+
+    '<div class="field"><label>Аудитория / преподаватель</label><input type="text" name="place" value="'+esc(x?x.place:'')+'" placeholder="ауд. 312, Иванов А. П." maxlength="70"></div>'+
+    '<div class="pair"><div class="field"><label>Начало</label><input type="time" name="from" value="'+esc(x?x.from:'09:00')+'" required></div>'+
+    '<div class="field"><label>Конец</label><input type="time" name="to" value="'+esc(x?x.to:'10:30')+'" required></div></div>'+
+    '<div class="field"><label>День</label>'+oneDayChips(day)+'</div>'+
+    '<div class="field"><label>Неделя</label><div class="chips">'+PARS.map(function(p){
+      return '<button type="button" class="chip" data-act="par" data-p="'+p[0]+'" aria-pressed="'+(par===p[0])+'">'+p[1]+'</button>'}).join('')+'</div></div>'+
+    '<div class="btnrow"><button type="submit" class="btn">Сохранить</button><button type="button" class="btn ghost" data-act="cancel">Отмена</button></div></form>';
+}
+
+/* ---------------- events ---------------- */
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-act]'); if(!t) return;
+  var a=t.dataset.act;
+
+  if(a==='tab'){ setTab(t.dataset.t); render(); return }
+  if(a==='week'){ weekAnchor=addDays(weekAnchor,+t.dataset.d*7); renderWeek(); return }
+  if(a==='pick'){ sel=t.dataset.k; if(tab!=='day') setTab('day'); render(); return }
+  if(a==='sday'){ studyDay=+t.dataset.w; editing=null; render(); return }
+
+  if(a==='flip'){
+    var cur=parityOf(TODAY);
+    S.parity={anchor:mondayKey(new Date()), odd:cur!=='odd'};
+    touch(); render(); return;
+  }
+
+  if(a==='block'){ var lb=dayLog(sel); lb.b[t.dataset.id]=!lb.b[t.dataset.id]; if(!lb.b[t.dataset.id]) delete lb.b[t.dataset.id]; touch(); render(); return }
+  if(a==='lesson'){ var ll=dayLog(sel); ll.l[t.dataset.id]=!ll.l[t.dataset.id]; if(!ll.l[t.dataset.id]) delete ll.l[t.dataset.id]; touch(); render(); return }
+
+  if(a==='habit'){
+    var lh=dayLog(sel), id=t.dataset.id;
+    var h=S.habits.filter(function(x){return x.id===id})[0]; if(!h) return;
+    var n=(lh.h[id]||0)+1; if(n>(h.goal||1)) n=0;
+    if(n) lh.h[id]=n; else delete lh.h[id];
+    touch(); render(); return;
+  }
+
+  if(a==='clearex'){
+    S.habits=S.habits.filter(function(x){return !x.ex});
+    S.blocks=S.blocks.filter(function(x){return !x.ex});
+    S.seeded=false; touch(); setTab('setup'); render(); return;
+  }
+
+  if(a==='savefile'){
+    try{
+      var blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+      var href=URL.createObjectURL(blob);
+      var link=document.createElement('a');
+      link.href=href; link.download='ezhok-'+TODAY+'.json';
+      document.body.appendChild(link); link.click(); document.body.removeChild(link);
+      setTimeout(function(){ URL.revokeObjectURL(href) },2000);
+    }catch(e){ alert('Не получилось сохранить файл — скопируй текст копии кнопкой «Скопировать».') }
+    return;
+  }
+  if(a==='copybk'){
+    var bo=$('#bkOut'); if(!bo) return;
+    bo.focus(); bo.select(); bo.setSelectionRange(0,bo.value.length);
+    var done=function(){ alert('Скопировано. Вставь в Заметки — это и есть резервная копия.') };
+    try{
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(bo.value).then(done,function(){ try{document.execCommand('copy');done()}catch(e){alert('Скопируй текст вручную — он уже выделен.')} });
+      } else { document.execCommand('copy'); done() }
+    }catch(e){ alert('Скопируй текст вручную — он уже выделен.') }
+    return;
+  }
+  if(a==='restorebk'){ var bi=$('#bkIn'); if(bi&&bi.value.trim()) restoreFrom(bi.value); return }
+
+  if(a==='new'){ editing={kind:t.dataset.kind,id:null}; render(); return }
+  if(a==='newonce'){ editing={kind:'block',id:null,once:sel}; render(); return }
+  if(a==='edit'){ editing={kind:t.dataset.kind,id:t.dataset.id}; render(); return }
+  if(a==='cancel'){ editing=null; render(); return }
+
+  if(a==='del'){
+    var kind=t.dataset.kind, did=t.dataset.id;
+    var list=kind==='habit'?S.habits:kind==='block'?S.blocks:S.lessons;
+    var item=list.filter(function(x){return x.id===did})[0]; if(!item) return;
+    if(!confirm('Удалить «'+item.name+'»? Отметки по нему тоже пропадут.')) return;
+    var field=kind==='habit'?'h':kind==='block'?'b':'l';
+    if(kind==='habit') S.habits=S.habits.filter(function(x){return x.id!==did});
+    else if(kind==='block') S.blocks=S.blocks.filter(function(x){return x.id!==did});
+    else S.lessons=S.lessons.filter(function(x){return x.id!==did});
+    Object.keys(S.log).forEach(function(k){ if(S.log[k][field]) delete S.log[k][field][did] });
+    if(!S.habits.length&&!S.blocks.length) S.seeded=false;
+    editing=null; touch(); render(); return;
+  }
+
+  if(a==='chip'){
+    var pressed=t.getAttribute('aria-pressed')==='true';
+    t.setAttribute('aria-pressed',String(!pressed));
+    var f=t.closest('form');
+    var ds=f.dataset.days?f.dataset.days.split(',').filter(Boolean).map(Number):[];
+    var w=+t.dataset.w;
+    if(pressed) ds=ds.filter(function(x){return x!==w}); else if(ds.indexOf(w)<0) ds.push(w);
+    f.dataset.days=ds.join(','); return;
+  }
+  if(a==='oneday'){
+    var f2=t.closest('form');
+    f2.querySelectorAll('[data-act="oneday"]').forEach(function(b){b.setAttribute('aria-pressed','false')});
+    t.setAttribute('aria-pressed','true'); f2.dataset.day=t.dataset.w; return;
+  }
+  if(a==='par'){
+    var f3=t.closest('form');
+    f3.querySelectorAll('[data-act="par"]').forEach(function(b){b.setAttribute('aria-pressed','false')});
+    t.setAttribute('aria-pressed','true'); f3.dataset.par=t.dataset.p; return;
+  }
+  if(a==='rep'){
+    var f4=t.closest('form');
+    f4.querySelectorAll('[data-act="rep"]').forEach(function(b){b.setAttribute('aria-pressed','false')});
+    t.setAttribute('aria-pressed','true'); f4.dataset.repeat=t.dataset.r;
+    f4.querySelector('[data-role="days"]').hidden=(t.dataset.r==='once');
+    f4.querySelector('[data-role="date"]').hidden=(t.dataset.r!=='once');
+    return;
+  }
+  if(a==='hue'){
+    var f5=t.closest('form');
+    f5.querySelectorAll('[data-act="hue"]').forEach(function(b){b.setAttribute('aria-pressed','false')});
+    t.setAttribute('aria-pressed','true'); f5.dataset.hue=t.dataset.i; return;
+  }
+});
+
+document.addEventListener('submit',function(e){
+  var f=e.target.closest('form[data-act]'); if(!f) return;
+  e.preventDefault();
+  var name=(f.name.value||'').trim(); if(!name) return;
+  var act=f.dataset.act;
+
+  if(act==='saveHabit'){
+    var days=f.dataset.days.split(',').filter(function(s){return s!==''}).map(Number);
+    if(!days.length){ alert('Выбери хотя бы один день недели.'); return }
+    var goal=Math.max(1,Math.min(20,parseInt(f.goal.value,10)||1));
+    var hue=parseInt(f.dataset.hue,10)||0;
+    if(f.dataset.id) S.habits.forEach(function(h){ if(h.id===f.dataset.id){h.name=name;h.goal=goal;h.days=days;h.hue=hue;delete h.ex} });
+    else S.habits.push({id:uid(),name:name,goal:goal,days:days,hue:hue});
+  }
+  else if(act==='saveBlock'){
+    var rep=f.dataset.repeat||'weekly';
+    var o={name:name,from:f.from.value,to:f.to.value,repeat:rep};
+    if(rep==='once'){
+      if(!f.date.value){ alert('Выбери дату.'); return }
+      o.date=f.date.value; o.days=[];
+    } else {
+      var bd=f.dataset.days.split(',').filter(function(s){return s!==''}).map(Number);
+      if(!bd.length){ alert('Выбери хотя бы один день недели.'); return }
+      o.days=bd; o.date=null;
+    }
+    if(f.dataset.id) S.blocks.forEach(function(b){ if(b.id===f.dataset.id){ for(var k in o) b[k]=o[k]; delete b.ex } });
+    else { o.id=uid(); S.blocks.push(o) }
+  }
+  else {
+    var lo={name:name,place:(f.place.value||'').trim(),from:f.from.value,to:f.to.value,
+            day:parseInt(f.dataset.day,10),parity:f.dataset.par||'all'};
+    if(f.dataset.id) S.lessons.forEach(function(x){ if(x.id===f.dataset.id) for(var k in lo) x[k]=lo[k] });
+    else { lo.id=uid(); S.lessons.push(lo) }
+    studyDay=lo.day;
+  }
+
+  if(!S.habits.some(function(x){return x.ex})&&!S.blocks.some(function(x){return x.ex})) S.seeded=false;
+  editing=null; touch(); render();
+});
+
+var noteTimer=null;
+document.addEventListener('input',function(e){
+  if(e.target.id!=='noteBox') return;
+  var val=e.target.value;
+  clearTimeout(noteTimer);
+  noteTimer=setTimeout(function(){ dayLog(sel).note=val; touch() },400);
+});
+
+render();
+})();
+</script>
+</body>
+</html>
