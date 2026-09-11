@@ -1,7 +1,7 @@
 /* Офлайн-кэш «Ежка».
    Правишь index.html — подними номер версии, иначе телефон
    будет показывать старую копию. */
-const VERSION = 'ezhok-v1';
+const VERSION = 'ezhok-v2';
 const SHELL = [
   './',
   './index.html',
