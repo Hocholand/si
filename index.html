@@ -115,7 +115,7 @@ textarea.bk{width:100%;min-height:78px;resize:vertical;border:1px solid var(--ru
 .headline span{font-family:var(--fm);font-size:11px;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
 
 /* time rows */
-.block{display:grid;grid-template-columns:52px 1fr 30px;gap:12px;align-items:center;
+.block{display:grid;grid-template-columns:52px 1fr 34px;gap:12px;align-items:center;
   padding:11px 14px 11px 12px;border-top:1px solid var(--rule-soft);text-align:left;width:100%}
 .block:first-child{border-top:none}
 .block .t{font-family:var(--fm);font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.2;letter-spacing:-.02em}
@@ -127,12 +127,15 @@ textarea.bk{width:100%;min-height:78px;resize:vertical;border:1px solid var(--ru
 .block.now .t{color:var(--accent-ink)}
 .block.lesson .t{color:var(--study)}
 .block.lesson.now{background:var(--study-soft)}
-.tick{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--rule);display:grid;place-items:center;
-  transition:transform .12s ease,background .12s ease,border-color .12s ease;flex:0 0 auto}
-.tick svg{width:13px;height:13px;opacity:0}
-.block.done .tick,.habit.done .tick{background:var(--good);border-color:var(--good)}
-.block.done .tick svg,.habit.done .tick svg{opacity:1;stroke:var(--surface)}
-.block:active .tick,.habit:active .tick{transform:scale(.86)}
+.tick{width:32px;height:28px;display:grid;place-items:center;flex:0 0 auto;transition:transform .14s ease}
+.tick svg{width:28px;height:28px;display:block}
+.tick .body{fill:none;stroke:var(--muted);stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round;opacity:.68;
+  transition:fill .15s ease,stroke .15s ease,opacity .15s ease}
+.tick .eye,.tick .nose{fill:var(--muted);opacity:.68;transition:fill .15s ease,opacity .15s ease}
+.block.done .tick .body,.habit.done .tick .body{fill:var(--accent);stroke:var(--accent);opacity:1}
+.block.done .tick .eye,.block.done .tick .nose,
+.habit.done .tick .eye,.habit.done .tick .nose{fill:var(--surface);opacity:1}
+.block:active .tick,.habit:active .tick{transform:scale(.84)}
 
 /* habits */
 .habit{display:grid;grid-template-columns:4px 1fr auto auto;gap:11px;align-items:center;
@@ -303,7 +306,7 @@ var WDFULL_CAP=['Воскресенье','Понедельник','Вторни�
 var MON_GEN=['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
 var MON_NOM=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
 var HUES=['#C2557F','#8A4FA8','#4E8A54','#B07A1F','#3F6FA8','#2A8C86'];
-var CHECK='<svg viewBox="0 0 24 24" fill="none" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5.2 5.2L20 6.5"/></svg>';
+var CHECK='<svg viewBox="0 0 24 24" aria-hidden="true"><path class="body" d="M 2.2 17.4 L 6.09 14.31 L 8.36 14.29 L 7.78 12.11 L 9.92 12.82 L 10.08 10.57 L 11.88 11.93 L 12.75 9.84 L 14.02 11.71 L 15.51 10.02 L 16.11 12.20 L 18.07 11.07 L 17.94 13.33 L 20.16 12.89 L 19.31 14.99 L 21.55 15.29 L 20.07 17.00 L 22.09 18.00 L 20.6 19.9 L 18.8 19.9 L 18.1 18.9 L 9.7 18.9 L 9.0 19.9 L 7.2 19.9 L 6.6 18.6 Z"/><circle class="eye" cx="6.4" cy="16.2" r="0.8"/><circle class="nose" cx="3" cy="17" r="0.62"/></svg>';
 var PEN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4z"/></svg>';
 var TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13"/></svg>';
 var plural=function(n,a,b,c){var m=n%100;if(m>=11&&m<=14)return c;m=n%10;return m===1?a:(m>=2&&m<=4?b:c)};
